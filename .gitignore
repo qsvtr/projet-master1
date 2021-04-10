@@ -3,9 +3,8 @@
 # SMART-CONTRACT
 application/smart-contract/.env
 application/smart-contract/.idea
-application/smart-contract/node-modules
+application/smart-contract/node_modules/
 application/smart-contract/truffle/build/contracts
-application/smart-contract/src/images
 
 # REACT-APP
 application/react-app/node_modules
