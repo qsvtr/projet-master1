@@ -1,1 +1,24 @@
 .idea/
+
+# SMART-CONTRACT
+application/smart-contract/.env
+application/smart-contract/.idea
+application/smart-contract/node-modules/
+application/smart-contract/truffle/build/contracts/
+application/smart-contract/src/images/
+
+# REACT-APP
+application/react-app/node_modules
+application/react-app/.pnp
+application/react-app/.pnp.js
+application/react-app/coverage
+application/react-app/build
+application/react-app/.idea
+application/react-app/.DS_Store
+application/react-app/.env.local
+application/react-app/.env.development.local
+application/react-app/.env.test.local
+application/react-app/.env.production.local
+application/react-app/npm-debug.log*
+application/react-app/yarn-debug.log*
+application/react-app/yarn-error.log*
