@@ -17,5 +17,5 @@ modify with your credentials
 
 `migrate --network development`
 
-## Mint NFT
+## MintForm NFT
 `node src/index.js`
