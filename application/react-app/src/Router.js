@@ -5,6 +5,7 @@ import Footer from './components/layout/Footer';
 import Home from "./components/Home";
 import MintFunction from "./components/MintFunction"
 import Information from "./components/Information";
+import Connexion from "./components/Connexion";
 
 const Router = () => {
     return (
@@ -16,6 +17,9 @@ const Router = () => {
             </Switch>
             <Switch>
                 <Route exact path='/mintFunction' render={() => (<MintFunction/>)}/>
+            </Switch>
+            <Switch>
+                <Route exact path='/Connexion' render={() => (<Connexion/>)}/>
             </Switch>
             <Footer />
         </ReactRouter>

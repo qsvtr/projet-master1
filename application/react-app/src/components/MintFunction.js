@@ -1,7 +1,6 @@
 import React, {useContext, useEffect} from "react";
 import GlobalState from "../contexts/GlobalState";
 
-//require('dotenv').config({path: '.env'});
 const pinata = require('./pinata');
 
 export default function MintFunction() {
@@ -15,18 +14,15 @@ export default function MintFunction() {
     const data = {
         name:'', description: '', image: "https://gateway.pinata.cloud/ipfs/QmeXs3naKK2Y4GCANLNSmpfbhMcurRXzqkMomXxvs7qNJH",
         attributes: {
-            name:'',
+            firstname:'',
             lastname:'',
-            studentID:'',
             school:'',
             city:'',
-            year:'' }};
+            birthdate:'' }
+    };
 
     const mySubmitHandler = (event) => {
         event.preventDefault();
-        //console.log("name : " + data.name);
-        //console.log("name : " + data.attributes.name);
-
         mintNFT("./src/images/cat.jpg", data, addressTo);
     };
 
@@ -44,83 +40,74 @@ export default function MintFunction() {
     const mintNFT = async () => {
         console.log("data : ", data);
         const metadata = await pinata.addDataToIPFS("./cat.jpg", data);
-        console.log("metadata : " + metadata);
         const token = await state.contract.methods.mint(addressTo, metadata).send({ from: state.address})
         console.log("token : ", token);
     };
 
-
     return (
-        <div>
-            <h1>Issue Token</h1>
+        <div className="container" >
+            <h1 className="text-center" >Create a new diploma</h1>
             <form onSubmit={mySubmitHandler}>
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='name'
+                    placeholder='Diploma name'
                     name='name'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='name'
-                    name='name'
+                    placeholder='First name'
+                    name='firstname'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='lastname'
+                    placeholder='Last name'
                     name='lastname'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='studentID'
-                    name='studentID'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='addressTo'
+                    placeholder='Student wallet address'
                     name='addressTo'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='year'
-                    name='year'
+                    placeholder='Birth date'
+                    name='birthdate'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='school'
+                    placeholder='School'
                     name='school'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='city'
+                    placeholder='City'
                     name='city'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='description'
+                    placeholder='Description'
                     name='description'
                     onChange={myChangeHandler}
                 />
                 <input
                     type='submit'
                     className='btn btn-block btn-primary'
-                    value='MINT'
+                    value='Create diploma'
                 />
             </form>
         </div>

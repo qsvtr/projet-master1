@@ -20,10 +20,11 @@ function Home() {
                         <LinkContainer to="/">
                             <Button className='mr-1'>Home</Button>
                         </LinkContainer>
-                    </ButtonToolbar>
-                    <ButtonToolbar className="custom-btn-toolbar">
                         <LinkContainer to="/mintFunction">
                             <Button className='mr-1'>MintFunction</Button>
+                        </LinkContainer>
+                        <LinkContainer to="/Connexion">
+                            <Button className='mr-1'>Connexion</Button>
                         </LinkContainer>
                     </ButtonToolbar>
                 </h2>

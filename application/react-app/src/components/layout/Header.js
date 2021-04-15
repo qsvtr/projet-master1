@@ -40,7 +40,7 @@ function Header() {
                     height="30"
                     className="d-inline-block align-top"
                 />{' '}
-                React Bootstrap
+                DiplomaFactory
             </Navbar.Brand>
             {!state.connected && <Button className='mr-1' color='#FF6B00' onClick={connectMetaMask}>Connect with Metamask</Button>}
             {state.connected && state.address && <p style={{color: "white"}}>connected with {state.address}</p>}
