@@ -23,6 +23,10 @@ export default function Information() {
                             ? <p style={{color: "red"}}>you need to be connected with Metamask first</p>
                             : null
                     ),
+                    (state.error.notRight
+                            ? <p style={{color: "red"}}>oops you don't have the right</p>
+                            : null
+                    ),
                 ]
             }
         </div>

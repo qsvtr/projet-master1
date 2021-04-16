@@ -1,6 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
+const School = db.school;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -16,8 +17,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({where: {username: req.body.username}
-  })
+  User.findOne({where: {username: req.body.username}})
     .then(user => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
@@ -34,3 +34,24 @@ exports.signin = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+exports.addSchool = (req, res) => {
+    let token = req.headers["x-access-token"];
+    if (!token) {
+        return res.status(403).send({message: "No token provided!"});
+    }
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({message: "Unauthorized!"});
+        }
+    });
+    console.log(req.body)
+    School.create({name: req.body.name, address: req.body.address, logo: req.body.logo})
+        .then(user => {
+            res.send({ message: "School created successfully!" });
+        })
+        .catch(err => {
+            res.status(500).send({ message: err.message });
+        });
+    // return res.status(200).send({message: "School created."})
+}

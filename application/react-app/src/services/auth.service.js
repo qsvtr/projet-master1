@@ -1,4 +1,5 @@
 import axios from "axios";
+import authHeader from './auth-header';
 
 const API_URL = "http://localhost:8080/api/auth/";
 
@@ -24,6 +25,10 @@ class AuthService {
 
     getCurrentUser() {
         return JSON.parse(localStorage.getItem('user'));
+    }
+
+    addSchool(name, address, logo) {
+        return axios.post(API_URL + "add-school", {name, address, logo}, { headers: authHeader() });
     }
 }
 

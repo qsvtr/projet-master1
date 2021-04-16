@@ -1,13 +1,35 @@
 import React, {useContext, useEffect} from "react";
 import GlobalState from "../contexts/GlobalState";
+import {Redirect} from "react-router-dom";
+import User from "../services/user.service";
 
 const pinata = require('../utils/pinata');
 
 export default function MintNFT() {
     const [state, setState] = useContext(GlobalState);
     useEffect(() => {
-        setState(state => ({...state}))
+        async function canImint() {
+            const result = await canimint()
+            if (!result.data) {
+                setState({error: {notRight: true}})
+                setState(state => ({...state, error: {notRight: true}}))
+            }
+        }
+        if (state.connected && state.address) {
+            canImint()
+        }
     }, []);
+
+
+    if (!state.connected) {
+        setState({error: {notConnected: true}})
+        setState({connected: false, address: null, error: {notConnected: true}})
+        return <Redirect to='/'/>
+    }
+
+    const canimint = async () => {
+        return await User.checkIamASchool(state.address)
+    }
 
     let addressTo ='0x4B9D40cD376cf7d9abA6FbA6FeB8BF73ef0fFc68';
 
@@ -45,71 +67,74 @@ export default function MintNFT() {
     };
 
     return (
-        <div className="container" >
-            <h1 className="text-center" >Create a new diploma</h1>
-            <form onSubmit={mySubmitHandler}>
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='Diploma name'
-                    name='name'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='First name'
-                    name='firstname'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='Last name'
-                    name='lastname'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='Student wallet address'
-                    name='addressTo'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='Birth date'
-                    name='birthdate'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='School'
-                    name='school'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='City'
-                    name='city'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='text'
-                    className='form-control mb-1'
-                    placeholder='Description'
-                    name='description'
-                    onChange={myChangeHandler}
-                />
-                <input
-                    type='submit'
-                    className='btn btn-block btn-primary'
-                    value='Create diploma'
-                />
-            </form>
+        <div className="container">
+                <h1 className="text-center" >Create a new diploma</h1>
+            { !state.error
+                ? <p>oops you don't have the right</p>
+                : <form onSubmit={mySubmitHandler}>
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='Diploma name'
+                        name='name'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='First name'
+                        name='firstname'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='Last name'
+                        name='lastname'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='Student wallet address'
+                        name='addressTo'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='Birth date'
+                        name='birthdate'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='School'
+                        name='school'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='City'
+                        name='city'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='text'
+                        className='form-control mb-1'
+                        placeholder='Description'
+                        name='description'
+                        onChange={myChangeHandler}
+                    />
+                    <input
+                        type='submit'
+                        className='btn btn-block btn-primary'
+                        value='Create diploma'
+                    />
+                </form>
+            }
         </div>
     );
 }

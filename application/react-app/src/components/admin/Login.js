@@ -43,7 +43,7 @@ export default class Login extends Component {
             AuthService.login(this.state.username, this.state.password).then(
                 () => {
                     console.log(this.props)
-                    this.props.history.push("/profile");
+                    this.props.history.push("/admin");
                     window.location.reload();
                 },
                 error => {

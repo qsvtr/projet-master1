@@ -1,6 +1,7 @@
 import React from 'react';
 import {Jumbotron, Container, Button, ButtonToolbar} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import SchoolList from "./layout/SchoolList";
 
 function Home() {
 
@@ -18,6 +19,8 @@ function Home() {
                         <Button className='mr-1'>MintNFT</Button>
                     </LinkContainer>
                 </ButtonToolbar>
+
+                <SchoolList/>
             </Jumbotron>
         </Container>
     );

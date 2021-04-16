@@ -1,7 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
 import GlobalState from "../contexts/GlobalState";
-import {Button} from "react-bootstrap";
-import {LinkContainer} from "react-router-bootstrap";
 import axios from "axios";
 import  { Redirect } from 'react-router-dom'
 
@@ -20,7 +18,6 @@ export default function DisplayNFTs() {
     }, []);
 
     if (!state.connected) {
-        console.log('not connected')
         setState({error: {notConnected: true}})
         setState({connected: false, address: null, error: {notConnected: true}})
         return <Redirect to='/'/>
@@ -44,9 +41,6 @@ export default function DisplayNFTs() {
     return (
         <div className="content mr-auto ml-auto">
             <h1>NFTS list:</h1>
-            <LinkContainer to="/">
-                <Button className='mr-1'>Home</Button>
-            </LinkContainer>
 
             <div className="row text-center">
                 { !state.connected
