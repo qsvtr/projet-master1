@@ -20,6 +20,9 @@ export default function DisplayNFTs() {
     }, []);
 
     if (!state.connected) {
+        console.log('not connected')
+        setState({error: {notConnected: true}})
+        setState({connected: false, address: null, error: {notConnected: true}})
         return <Redirect to='/'/>
     }
 

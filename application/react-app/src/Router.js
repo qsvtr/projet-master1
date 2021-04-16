@@ -5,8 +5,10 @@ import Footer from './components/layout/Footer';
 import Home from "./components/Home";
 import MintNFT from "./components/MintNFT"
 import Information from "./components/layout/Information";
-import Connexion from "./components/auth/Connexion";
+import Login from "./components/admin/Login";
 import DisplayNFTs from "./components/DisplayNFTs";
+import Profile from "./components/admin/Profile";
+import AdminPage from "./components/admin/Admin";
 
 const Router = () => {
     return (
@@ -14,16 +16,12 @@ const Router = () => {
             <Header />
             <Information/>
             <Switch>
-                <Route exact path='/' render={() => (<Home/>)}/>
-            </Switch>
-            <Switch>
+                <Route exact path={["/", "/home"]} component={Home} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/profile" component={Profile} />
+                <Route path="/admin" component={AdminPage} />
                 <Route exact path='/nft' render={() => (<DisplayNFTs/>)}/>
-            </Switch>
-            <Switch>
                 <Route exact path='/mintNFT' render={() => (<MintNFT/>)}/>
-            </Switch>
-            <Switch>
-                <Route exact path='/Connexion' render={() => (<Connexion/>)}/>
             </Switch>
             <Footer />
         </ReactRouter>

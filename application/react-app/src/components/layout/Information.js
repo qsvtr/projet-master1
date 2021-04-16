@@ -19,6 +19,10 @@ export default function Information() {
                             ? <p style={{color: "red"}}>please use Avalanche Network Fuji as network</p>
                             : null
                     ),
+                    (state.error.notConnected
+                            ? <p style={{color: "red"}}>you need to be connected with Metamask first</p>
+                            : null
+                    ),
                 ]
             }
         </div>

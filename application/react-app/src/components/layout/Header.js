@@ -1,18 +1,29 @@
 import React, {useContext, useEffect} from 'react';
-import {Button, Navbar} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import Web3 from "web3";
 import GlobalState from "../../contexts/GlobalState";
 import Diplome from "../../abis/Diplome.json";
+import {Link} from "react-router-dom";
+import AuthService from "../../services/auth.service";
 
 function Header() {
     const [state, setState] = useContext(GlobalState);
     useEffect(() => {
-        setState(state => ({...state}))
+        async function loadCurrentUser() {
+            const user = await AuthService.getCurrentUser();
+            if (user) {
+                setState(state => ({...state, currentUser: user}))
+            }
+        }
+        loadCurrentUser()
     }, []);
     console.log(state)
 
+    const logOut = () => {
+        AuthService.logout();
+    }
+
     const connectMetaMask = async () => {
-        console.log('clicked')
         if (window.hasOwnProperty("ethereum") && window.ethereum.hasOwnProperty("isMetaMask")) {
             window.web3 = new Web3(window.ethereum);
             window.ethereum.enable();
@@ -21,30 +32,50 @@ function Header() {
                 const accounts = await window.web3.eth.getAccounts();
                 const contract_address = "0xa6d55043FDe319156327B093dc8E0A5555F3D614"
                 const contract = new window.web3.eth.Contract(Diplome.abi, contract_address);
-                setState({connected: true, address: accounts[0], error: null, contract: contract})
+                setState(state => ({...state, connected: true, address: accounts[0], error: null, contract: contract}))
             } else {
-                setState({connected: false, address: null, error: {metamaskNotInstalled: false, wrongChainId: true}})
+                setState(state => ({...state, connected: false, address: null, error: {metamaskNotInstalled: false, wrongChainId: true}}))
             }
         } else {
-            setState(({connected: false, address: null, error: {metamaskNotInstalled: true, wrongChainId: false}}))
+            setState(state => ({...state, connected: false, address: null, error: {metamaskNotInstalled: true, wrongChainId: false}}))
         }
     }
 
     return(
-        <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="/">
-                <img
-                    alt=""
-                    src="logo192.png"
-                    width="30"
-                    height="30"
-                    className="d-inline-block align-top"
-                />{' '}
-                DiplomaFactory
-            </Navbar.Brand>
+        <nav className="navbar navbar-expand navbar-dark bg-dark">
+            <Link to="/" className="navbar-brand">*APP TITLE*</Link>
+            <div className="navbar-nav mr-auto">
+                <li className="nav-item">
+                    <Link to={"/"} className="nav-link">Home</Link>
+                </li>
+
+                {state.currentUser && (
+                    <li className="nav-item">
+                        <Link to={"/admin"} className="nav-link">Admin Board</Link>
+                    </li>
+                )}
+            </div>
+
             {!state.connected && <Button className='mr-1' color='#FF6B00' onClick={connectMetaMask}>Connect with Metamask</Button>}
             {state.connected && state.address && <p style={{color: "white"}}>connected with {state.address}</p>}
-        </Navbar>
+
+            {state.currentUser ? (
+                <div className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                        <Link to={"/profile"} className="nav-link">{state.currentUser.username}</Link>
+                    </li>
+                    <li className="nav-item">
+                        <a href="/" className="nav-link" onClick={() => logOut()}>Logout</a>
+                    </li>
+                </div>
+            ) : (
+                <div className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                        <Link to={"/login"} className="nav-link">Login</Link>
+                    </li>
+                </div>
+            )}
+        </nav>
     );
 }
 
