@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {Jumbotron, Container, Button, ButtonToolbar} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import Information from "./Information"
+import Information from "./layout/Information"
 import GlobalState from "../contexts/GlobalState";
 
 function Home() {
@@ -20,8 +20,8 @@ function Home() {
                         <LinkContainer to="/">
                             <Button className='mr-1'>Home</Button>
                         </LinkContainer>
-                        <LinkContainer to="/mintFunction">
-                            <Button className='mr-1'>MintFunction</Button>
+                        <LinkContainer to="/mintNFT">
+                            <Button className='mr-1'>MintNFT</Button>
                         </LinkContainer>
                         <LinkContainer to="/Connexion">
                             <Button className='mr-1'>Connexion</Button>

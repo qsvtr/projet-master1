@@ -1,9 +1,9 @@
 import React, {useContext, useEffect} from "react";
 import GlobalState from "../contexts/GlobalState";
 
-const pinata = require('./pinata');
+const pinata = require('../utils/pinata');
 
-export default function MintFunction() {
+export default function MintNFT() {
     const [state, setState] = useContext(GlobalState);
     useEffect(() => {
         setState(state => ({...state}))

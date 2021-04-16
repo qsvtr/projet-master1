@@ -1,6 +1,5 @@
-// import './Information.css';
 import React, {useContext, useEffect} from "react";
-import GlobalState from "../contexts/GlobalState";
+import GlobalState from "../../contexts/GlobalState";
 
 export default function Information() {
     const [state, setState] = useContext(GlobalState);
