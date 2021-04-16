@@ -6,6 +6,12 @@ application/smart-contract/.idea
 application/smart-contract/node_modules/
 application/smart-contract/truffle/build/contracts
 
+# BACKEND
+
+application/backend/node_modules
+application/backend/app/config/auth.config.js
+application/backend/app/config/db.config.js
+
 # REACT-APP
 application/react-app/node_modules
 application/react-app/.pnp

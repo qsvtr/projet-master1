@@ -29,10 +29,10 @@ export default function MintNFT() {
     const myChangeHandler = (event) => {
         const nam = event.target.name;
         const val = event.target.value;
-        if (nam == "addressTo"){
+        if (nam === "addressTo"){
             addressTo = val;
         }
-        if (nam == "name" || nam == "description"){
+        if (nam === "name" || nam === "description"){
             data[nam] = val;
         } else { data.attributes[nam] = val; }
     };
