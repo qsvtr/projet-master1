@@ -20,6 +20,11 @@ function Home() {
                         <LinkContainer to="/">
                             <Button className='mr-1'>Home</Button>
                         </LinkContainer>
+                        <ButtonToolbar className="custom-btn-toolbar">
+                            <LinkContainer to="/nft">
+                                <Button className='mr-1'>List NFTs</Button>
+                            </LinkContainer>
+                        </ButtonToolbar>
                         <LinkContainer to="/mintNFT">
                             <Button className='mr-1'>MintNFT</Button>
                         </LinkContainer>
