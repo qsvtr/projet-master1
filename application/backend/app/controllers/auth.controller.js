@@ -45,7 +45,6 @@ exports.addSchool = (req, res) => {
             return res.status(401).send({message: "Unauthorized!"});
         }
     });
-    console.log(req.body)
     School.create({name: req.body.name, address: req.body.address, logo: req.body.logo, publicKey: req.body.publicKey})
         .then(user => {
             res.send({ message: "School created successfully!" });
@@ -53,5 +52,4 @@ exports.addSchool = (req, res) => {
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
-    // return res.status(200).send({message: "School created."})
 }

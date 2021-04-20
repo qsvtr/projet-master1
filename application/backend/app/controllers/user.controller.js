@@ -2,6 +2,8 @@ const crypto = require("crypto")
 const cryptoUtils = require("../utils/crypto")
 const db = require("../models");
 const School = db.school;
+const web3 = require("../utils/web3")
+const axios = require("axios")
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -15,7 +17,6 @@ exports.getSchools = (req, res) => {
   School.findAll()
       .then( data => res.status(200).send(data))
       .catch( err => {
-          console.log(err)
           res.status(500).send(null)
       })
 }
@@ -48,6 +49,7 @@ exports.getSchool = (req, res) => {
 
 exports.encryptMetadata = (req, res) => {
     const data = req.body.metadata
+    console.log(data)
     if (!data) {
         res.status(500).send("data not found")
     }
@@ -62,4 +64,38 @@ exports.encryptMetadata = (req, res) => {
     }
 }
 
-exports.decryptData = (req, res) => {}
+const verifyAuthenticityNFT = async (schoolName, signature) => {
+    const school = await School.findOne({where: {name: schoolName}})
+    return await cryptoUtils.verify(school.publicKey, signature)
+}
+
+exports.getNFT = async (req, res) => {
+    const data = req.body
+    if (!data.id || !data.key) {
+        res.status(500).send({message: "cannot find token"})
+    }
+    const tokenUriUrl = await web3.getTokenUri(data.id)
+    const metadata = await axios.get(tokenUriUrl)
+        .then(res => res.data)
+        .catch(err => null)
+    try {
+        const IV = data.key
+        metadata.attributes.firstname = cryptoUtils.decrypt(metadata.attributes.firstname, IV)
+        metadata.attributes.lastname = cryptoUtils.decrypt(metadata.attributes.lastname, IV)
+        metadata.attributes.birthdate = cryptoUtils.decrypt(metadata.attributes.birthdate, IV)
+    } catch(error) {
+        console.log(error)
+        res.status(500).send({message: "cannot decrypt metadata"})
+    }
+    if (!metadata) {
+        res.status(500).send({message: "cannot decrypt metadata"})
+    } else {
+        const verify = await verifyAuthenticityNFT(metadata.name, metadata.attributes.signature)
+        if (!verify) {
+            res.status(500).send({message: "not authentic"})
+        } else {
+            res.status(200).send({message: "success", data: metadata})
+        }
+    }
+
+}

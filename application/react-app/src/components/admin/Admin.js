@@ -30,11 +30,11 @@ export default class AdminPage extends Component {
 
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/exportKey
     async exportCryptoKey(key, type) {
-        let exported = null
+        let exported
         if (type === "private") {
             exported = await window.crypto.subtle.exportKey("pkcs8", key);
         } else {
-            exported = await window.crypto.subtle.exportKey("pkcs8", key);
+            exported = await window.crypto.subtle.exportKey("spki", key);
         }
         const exportedAsString = String.fromCharCode.apply(null, new Uint8Array(exported));
         const exportedAsBase64 = window.btoa(exportedAsString);
@@ -42,7 +42,7 @@ export default class AdminPage extends Component {
         if (type === "private") {
             value = `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`
         } else {
-            value = `-----BEGIN PUBLIC KEY----- ${exportedAsBase64} -----END PUBLIC KEY-----`;
+            value = `-----BEGIN PUBLIC KEY-----${exportedAsBase64}-----END PUBLIC KEY-----`;
         }
         return value
     }
@@ -52,7 +52,7 @@ export default class AdminPage extends Component {
         const element = document.createElement("a");
         const file = new Blob([this.privateKey], {type: 'text/plain'});
         element.href = URL.createObjectURL(file);
-        element.download = "key.pcm";
+        element.download = "privateKey.pcm";
         element.click()
     }
 
@@ -82,6 +82,43 @@ export default class AdminPage extends Component {
         }
     }
 
+    /* ######
+    *
+    *
+    *
+    * */
+    fromBase64 = base64String => Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
+    getPkcs8Der = pkcs8Pem => {
+        pkcs8Pem = pkcs8Pem.replace( /[\r\n]+/gm, "" );
+        const pkcs8PemHeader = "-----BEGIN PRIVATE KEY-----";
+        const pkcs8PemFooter = "-----END PRIVATE KEY-----";
+        pkcs8Pem = pkcs8Pem.substring(pkcs8PemHeader.length, pkcs8Pem.length - pkcs8PemFooter.length);
+        return this.fromBase64(pkcs8Pem);
+    }
+    importPrivateKey(pem) {
+        return window.crypto.subtle.importKey("pkcs8", this.getPkcs8Der(pem),{name: "RSASSA-PKCS1-v1_5", hash: "SHA-256",},true, ["sign"]);
+    }
+    str2ab(str) {
+        const buf = new ArrayBuffer(str.length);
+        const bufView = new Uint8Array(buf);
+        for (let i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+    }
+    getDataEncoding = (data) => {
+        const enc = new TextEncoder()
+        return enc.encode(data)
+    }
+    importPublicKey(pem) {
+        const pemHeader = "-----BEGIN PUBLIC KEY-----";
+        const pemFooter = "-----END PUBLIC KEY-----";
+        const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
+        const binaryDerString = atob(pemContents);
+        const binaryDer = this.str2ab(binaryDerString);
+        return window.crypto.subtle.importKey("spki", binaryDer,{name: "RSASSA-PKCS1-v1_5", hash: "SHA-256",}, true, ["verify"]);
+    }
+
     async handleAddSchool(e) {
         e.preventDefault();
         this.setState({message: "", loading: true});
@@ -90,15 +127,22 @@ export default class AdminPage extends Component {
         const logoType = this.logo.type
         if (this.checkBtn.context._errors.length === 0 && logoSize > 0 && logoSize < 0.5 && logoType.includes('image')) {
             const logo_url = await pinata.pinPictureToIPFS(this.logo)
-            const key = await window.crypto.subtle.generateKey(
-                {name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256",},
-                true, ["encrypt", "decrypt"]
-            )
+            const key = await  window.crypto.subtle.generateKey(
+                {name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256",},
+                true, ["sign", "verify"])
             this.privateKey = await this.exportCryptoKey(key.privateKey, 'private');
-            const publicKey = await this.exportCryptoKey(key.privateKey, 'public');
+            const publicKey = await this.exportCryptoKey(key.publicKey, 'public');
+
+            const privateKey2 = await this.importPrivateKey(this.privateKey)
+            const publicKey2 = await this.importPublicKey(publicKey)
+            const enc = new TextEncoder()
+            const signatureBytes = await window.crypto.subtle.sign({name: 'RSASSA-PKCS1-v1_5'}, privateKey2, enc.encode('test'))
+            const verify = await window.crypto.subtle.verify({name: 'RSASSA-PKCS1-v1_5'}, publicKey2, signatureBytes, enc.encode('test'));
+            console.log('verify', verify)
+
+
             AuthService.addSchool(this.state.name, this.state.address, logo_url, publicKey)
                 .then(res => {
-                    console.log(res)
                     const resMessage = res.data.message
                     this.setState({
                         loading: false,

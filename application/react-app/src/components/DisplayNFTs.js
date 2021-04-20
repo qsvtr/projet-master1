@@ -1,36 +1,40 @@
 import React, {useContext, useEffect, useState} from "react";
 import GlobalState from "../contexts/GlobalState";
 import axios from "axios";
-import  { Redirect } from 'react-router-dom'
+import  { Redirect, useParams } from 'react-router-dom'
+
 
 export default function DisplayNFTs() {
     const [state, setState] = useContext(GlobalState);
     const [nfts, setNFTs] = useState(null);
+    const params = useParams()
 
     useEffect(() => {
-        async function fetchNFTS() {
+        console.log(params)
+        /*async function fetchNFTS() {
             const result = await fetchNFTs()
             setNFTs(result)
         }
         if (state.connected && state.address) {
             fetchNFTS()
-        }
+        }*/
     }, []);
 
-    if (!state.connected) {
+    /*if (!state.connected) {
         setState({error: {notConnected: true}})
         setState({connected: false, address: null, error: {notConnected: true}})
         return <Redirect to='/'/>
-    }
+    }*/
 
     const fetchNFTs = async () => {
         const nfts = [];
+        console.log(state.contract.methods)
         const totalSupply = await state.contract.methods.totalSupply().call()
         for (let i = 1; i <= totalSupply; i++) {
             let ipfs_link = await state.contract.methods.tokenURI(i).call()
             await axios.get(ipfs_link)
                 .then(res => {
-                    console.log(res.data)
+                    //console.log(res.data)
                     nfts.push(res.data)
                 })
                 .catch(err => console.log(err))

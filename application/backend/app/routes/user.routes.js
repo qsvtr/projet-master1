@@ -13,4 +13,5 @@ module.exports = function(app) {
   app.post("/api/canimint", controller.canIMint)
   app.post("/api/getSchool", controller.getSchool)
   app.post("/api/encryptMetadata", controller.encryptMetadata)
+  app.post("/api/getNFT", controller.getNFT)
 };

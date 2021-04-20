@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import GlobalState from "../contexts/GlobalState";
 import {Redirect} from "react-router-dom";
+import QRCode from 'react-qr-code';
 import User from "../services/user.service";
-
 const pinata = require('../utils/pinata');
 
 export default function MintNFT() {
@@ -40,12 +40,11 @@ export default function MintNFT() {
         return await User.getSchool(state.address)
     }
 
-    const data = {name:'', description: '', image: "", attributes: {firstname:'', lastname:'', birthdate:'' }};
+    const data = {name:'', description: '', image: "", attributes: {signature: '', firstname:'', lastname:'', birthdate:'' }};
 
     const mySubmitHandler = async (event) => {
         event.preventDefault();
-        console.log('file:', fileReaded)
-        //await encryptData()
+        await encryptData()
         await mintNFT();
     };
 
@@ -55,9 +54,12 @@ export default function MintNFT() {
         if (data_name === "description"){
             data[data_name] = val;
         } else { data.attributes[data_name] = val; }
+        console.log(data)
     };
 
     const mintNFT = async () => {
+        setErrorState(null)
+        setMessageState(null)
         setLoadingState(true)
         data.name = state.school.name
         data.image = state.school.logo
@@ -91,13 +93,12 @@ export default function MintNFT() {
             })
     };
 
-    /*
+
     const onChangeFile = async (e) => {
         if (e.target.files[0]) {
             const reader = new FileReader();
             reader.onload = async (e) => {
-                const text = (e.target.result)
-                setFileState(text)
+                setFileState(e.target.result)
             };
             await reader.readAsText(e.target.files[0])
         }
@@ -105,14 +106,7 @@ export default function MintNFT() {
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/decrypt
-    function str2ab(str) {
-        const buf = new ArrayBuffer(str.length);
-        const bufView = new Uint8Array(buf);
-        for (let i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
-        }
-        return buf;
-    }
+    // https://stackoverflow.com/questions/61096703/decrypt-an-rsa-message-from-browser-with-window-crypto-subtle-apis
     const fromBase64 = base64String => Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
     const getPkcs8Der = pkcs8Pem => {
         pkcs8Pem = pkcs8Pem.replace( /[\r\n]+/gm, "" );
@@ -122,16 +116,10 @@ export default function MintNFT() {
         return fromBase64(pkcs8Pem);
     }
     function importPrivateKey(pem) {
-        const pemHeader = "-----BEGIN PRIVATE KEY-----";
-        const pemFooter = "-----END PRIVATE KEY-----";
-        const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
-        const binaryDerString = window.atob(pemContents);
-        const binaryDer = str2ab(binaryDerString);
-        console.log(binaryDer)
         return window.crypto.subtle.importKey(
             "pkcs8",  getPkcs8Der(pem),
-            {name: "RSA-OAEP", hash: "SHA-1",},
-            true, ["decrypt"],
+            {name: "RSASSA-PKCS1-v1_5", hash: "SHA-256",},
+            true, ["sign"],
         );
     }
     const getDataEncoding = (data) => {
@@ -139,14 +127,11 @@ export default function MintNFT() {
         return enc.encode(data)
     }
     const encryptData = async () => {
+        const encodedData = getDataEncoding('test')
         const privateKey = await importPrivateKey(fileReaded)
-        console.log('privateKey', privateKey)
-        const message_encrypted = await window.crypto.subtle.encrypt({name: 'RSA-OAEP'}, privateKey, getDataEncoding('test'))
-        console.log('encrypted:', message_encrypted)
-        const encrypted = await window.crypto.subtle.decrypt({name: "RSA-OAEP"}, privateKey, message_encrypted)
-        console.log('encrypted:', encrypted)
+        const signatureBytes = await window.crypto.subtle.sign({name: 'RSASSA-PKCS1-v1_5'}, privateKey, encodedData)
+        data.attributes.signature = btoa(String.fromCharCode(...new Uint8Array(signatureBytes)));
     }
-    */
 
     return (
         <div className="container">
@@ -173,21 +158,19 @@ export default function MintNFT() {
                                name='birthdate' onChange={myChangeHandler}/>
                     </div>
 
-                    {/*
+
                     <div className="form-group">
                         <label htmlFor="logo">private key to sign the diploma</label>
                         <input type={"file"} className="form-control" name="logo" onChange={onChangeFile}/>
                     </div>
-                    */}
 
-                    {/* <input disabled={loadingState} type='submit' className='btn btn-block btn-primary' value='Create diploma'/> */}
                     <button type="submit" className="btn btn-primary btn-block" disabled={loadingState}>
                         {loadingState && (<span className="spinner-border spinner-border-sm"/>)}
                         <span>Create diploma</span>
                     </button>
 
                     {message && (
-                        <div style={{marginTop: 15}} className="form-group">
+                        <div style={{marginTop: 15}} className="form-group text-center">
                             <div className="alert alert-success" role="alert">
                                 <p>{message}</p>
                                 <p><a href={"https://cchain.explorer.avax-test.network/tx/"+txHash} target='_blank'>check transaction on explorer</a></p>
@@ -195,10 +178,15 @@ export default function MintNFT() {
                                 <br/>
                                 <p>IV to decode data (ONLY ONE!): {IV}</p>
                             </div>
+
+                            <di>
+                                <p>scan or send this QR Code to display the diploma</p>
+                                <QRCode value={"https://monsite.com/?id="+tokenNb+"&key="+IV}/>
+                            </di>
                         </div>
                     )}
                     {error && (
-                        <div className="form-group">
+                        <div style={{marginTop: 15}} className="form-group">
                             <div className="alert alert-danger" role="alert">
                                 {error}
                             </div>
