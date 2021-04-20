@@ -1,17 +1,62 @@
+<!-- MVP.css quickstart template: https://github.com/andybrewer/mvp/ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Display my diploma</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/mvp.css">
+    <link rel="stylesheet" href="css/sticky.css">
+    <title>Prove my Diploma</title>
 </head>
-<body>
-    <h1>Display my Diploma</h1>
-    <div id="error"></div>
-    <div id="diploma"></div>
 
-    <script type="text/javascript" src="js/jquery-3.6-0.min.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+<body>
+<header>
+    <nav>
+        <a href="/"><h1>APP TITLE</h1></a>
+        <ul>
+            <li>Menu Item 1</li>
+            <li><a href="#">Menu Item 2</a></li>
+        </ul>
+    </nav>
+    <h1>Prove <u>Authenticity</u> of your Diploma</h1>
+    <br>
+    <div id="qrcode">
+        <a href="#"><b id="qrcodeText">scan my QR Code</b></a>
+    </div>
+</header>
+
+<main>
+    <hr>
+    <div id="loading"></div>
+    <div id="error"></div>
+    <div id="content"></div>
+    <hr>
+    <section class="credentials">
+        <br>
+        <header>
+            <h2>Or enter your credentials</h2>
+        </header>
+        <form class="text-center">
+            <label for="id">Id of your NFT:</label>
+            <input type="text" id="id" name="id" placeholder="nftId">
+            <label for="key">your secret key:</label>
+            <input type="text" id="key" name="key" placeholder="key">
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <hr>
+    <p>credits</p>
+</footer>
+
+<script type="text/javascript" src="js/jquery-3.6-0.min.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>
