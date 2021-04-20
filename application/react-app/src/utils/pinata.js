@@ -28,13 +28,13 @@ const pinJSONToIPFS = async (obj) => {
 }
 
 module.exports = {
-    addDataToIPFS: (imagePath, metadata) => {
-        return pinJSONToIPFS(metadata)
+    pinPictureToIPFS: (logo) => {
+        return pinPictureToIPFS(logo)
             .then(hash => "https://gateway.pinata.cloud/ipfs/"+hash)
             .catch(err => console.log(err))
     },
-    pinPictureToIPFS: (logo) => {
-        return pinPictureToIPFS(logo)
+    addDataToIPFS: (metadata) => {
+        return pinJSONToIPFS(metadata)
             .then(hash => "https://gateway.pinata.cloud/ipfs/"+hash)
             .catch(err => console.log(err))
     }

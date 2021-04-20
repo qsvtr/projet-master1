@@ -10,5 +10,7 @@ module.exports = function(app) {
   app.get("/api/all", controller.allAccess);
   app.get("/api/user", [authJwt.verifyToken], controller.userBoard);
   app.get("/api/getSchools", controller.getSchools)
-  app.post("/api/canimint", controller.getSchool)
+  app.post("/api/canimint", controller.canIMint)
+  app.post("/api/getSchool", controller.getSchool)
+  app.post("/api/encryptMetadata", controller.encryptMetadata)
 };

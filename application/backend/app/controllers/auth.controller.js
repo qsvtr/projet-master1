@@ -46,7 +46,7 @@ exports.addSchool = (req, res) => {
         }
     });
     console.log(req.body)
-    School.create({name: req.body.name, address: req.body.address, logo: req.body.logo})
+    School.create({name: req.body.name, address: req.body.address, logo: req.body.logo, publicKey: req.body.publicKey})
         .then(user => {
             res.send({ message: "School created successfully!" });
         })

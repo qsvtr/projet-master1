@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         logo: {
             type: Sequelize.STRING
+        },
+        publicKey: {
+            type: Sequelize.TEXT
         }
     });
 };

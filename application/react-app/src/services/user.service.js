@@ -19,6 +19,14 @@ class UserService {
     checkIamASchool(address) {
         return axios.post(API_URL + "canimint", {address});
     }
+
+    getSchool(address) {
+        return axios.post(API_URL + "getSchool", {address});
+    }
+
+    encryptMetadata(metadata) {
+        return axios.post(API_URL + "encryptMetadata", {metadata})
+    }
 }
 
 export default new UserService();

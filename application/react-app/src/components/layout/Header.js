@@ -17,7 +17,6 @@ function Header() {
         }
         loadCurrentUser()
     }, []);
-    console.log(state)
 
     const logOut = () => {
         AuthService.logout();

@@ -27,8 +27,8 @@ class AuthService {
         return JSON.parse(localStorage.getItem('user'));
     }
 
-    addSchool(name, address, logo) {
-        return axios.post(API_URL + "add-school", {name, address, logo}, { headers: authHeader() });
+    addSchool(name, address, logo, publicKey) {
+        return axios.post(API_URL + "add-school", {name, address, logo, publicKey}, { headers: authHeader() });
     }
 }
 

@@ -23,10 +23,38 @@ export default class AdminPage extends Component {
         this.onChangeName = this.onChangeName.bind(this);
         this.onChangeAddress = this.onChangeAddress.bind(this);
         this.onChangeLogo = this.onChangeLogo.bind(this);
-        this.state = {name: "", address: "", logo: "", loading: false, message: ""};
+        this.state = {name: "", address: "", logo: "", loading: false, message: "", error: ""};
+    }
+    logo = {}
+    privateKey = ""
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/exportKey
+    async exportCryptoKey(key, type) {
+        let exported = null
+        if (type === "private") {
+            exported = await window.crypto.subtle.exportKey("pkcs8", key);
+        } else {
+            exported = await window.crypto.subtle.exportKey("pkcs8", key);
+        }
+        const exportedAsString = String.fromCharCode.apply(null, new Uint8Array(exported));
+        const exportedAsBase64 = window.btoa(exportedAsString);
+        let value = ""
+        if (type === "private") {
+            value = `-----BEGIN PRIVATE KEY-----\n${exportedAsBase64}\n-----END PRIVATE KEY-----`
+        } else {
+            value = `-----BEGIN PUBLIC KEY----- ${exportedAsBase64} -----END PUBLIC KEY-----`;
+        }
+        return value
     }
 
-    logo = {}
+    downloadPrivateKey = async (e) => {
+        e.preventDefault();
+        const element = document.createElement("a");
+        const file = new Blob([this.privateKey], {type: 'text/plain'});
+        element.href = URL.createObjectURL(file);
+        element.download = "key.pcm";
+        element.click()
+    }
 
     componentDidMount() {
         UserService.getUserBoard()
@@ -61,8 +89,14 @@ export default class AdminPage extends Component {
         const logoSize = (this.logo.size / (1024*1024)).toFixed(3)
         const logoType = this.logo.type
         if (this.checkBtn.context._errors.length === 0 && logoSize > 0 && logoSize < 0.5 && logoType.includes('image')) {
-            const hash = await pinata.pinPictureToIPFS(this.logo)
-            AuthService.addSchool(this.state.name, this.state.address, hash)
+            const logo_url = await pinata.pinPictureToIPFS(this.logo)
+            const key = await window.crypto.subtle.generateKey(
+                {name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256",},
+                true, ["encrypt", "decrypt"]
+            )
+            this.privateKey = await this.exportCryptoKey(key.privateKey, 'private');
+            const publicKey = await this.exportCryptoKey(key.privateKey, 'public');
+            AuthService.addSchool(this.state.name, this.state.address, logo_url, publicKey)
                 .then(res => {
                     console.log(res)
                     const resMessage = res.data.message
@@ -80,7 +114,7 @@ export default class AdminPage extends Component {
                         error.toString();
                     this.setState({
                         loading: false,
-                        message: resMessage
+                        error: resMessage
                     });
                 })
         } else {
@@ -127,8 +161,16 @@ export default class AdminPage extends Component {
 
                                     {this.state.message && (
                                         <div className="form-group">
-                                            <div className="alert alert-danger" role="alert">
+                                            <div className="alert alert-success" role="alert">
                                                 {this.state.message}
+                                            </div>
+                                            <button onClick={this.downloadPrivateKey}>Download your private key</button>
+                                        </div>
+                                    )}
+                                    {this.state.error && (
+                                        <div className="form-group">
+                                            <div className="alert alert-danger" role="alert">
+                                                {this.state.error}
                                             </div>
                                         </div>
                                     )}
