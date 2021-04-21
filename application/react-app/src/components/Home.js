@@ -1,25 +1,14 @@
 import React from 'react';
-import {Jumbotron, Container, Button, ButtonToolbar} from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import {Jumbotron, Container} from 'react-bootstrap';
 import SchoolList from "./layout/SchoolList";
 
 function Home() {
 
     return(
-        <Container className="p-3">
+        <Container className="p-3 text-center">
             <Jumbotron>
-                <h1 className="header">Welcome To React-Bootstrap</h1>
-                <ButtonToolbar className="custom-btn-toolbar">
-                    <ButtonToolbar className="custom-btn-toolbar">
-                        <LinkContainer to="/nft">
-                            <Button className='mr-1'>List NFTs</Button>
-                        </LinkContainer>
-                    </ButtonToolbar>
-                    <LinkContainer to="/mintNFT">
-                        <Button className='mr-1'>MintNFT</Button>
-                    </LinkContainer>
-                </ButtonToolbar>
-
+                <h1 className="header">Safe on Chain - Admin</h1>
+                <br/>
                 <SchoolList/>
             </Jumbotron>
         </Container>

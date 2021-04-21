@@ -24,7 +24,7 @@ const getToken = async (id, key) => {
         })
         .catch(error => {
             $('#loading').html('')
-            $('#error').append(`<h2 style="color: red">fatal error</h2>`)
+            $('#error').append(`<h2 style="color: red">We could not connect with the backend. Try again or wait a moment.</h2>`)
             console.log('error', error)
         })
 }

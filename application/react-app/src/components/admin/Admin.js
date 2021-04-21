@@ -4,7 +4,7 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import AuthService from "../../services/auth.service";
-import pinata from "../../utils/pinata"
+import axios from "axios"
 
 const required = value => {
     if (!value) {
@@ -27,6 +27,22 @@ export default class AdminPage extends Component {
     }
     logo = {}
     privateKey = ""
+
+    async pinPictureToIPFS(logo) {
+        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+        const data = new FormData();
+        data.append('file', logo);
+        return axios.post(url, data, {
+            maxContentLength: 'Infinity',
+            headers: {
+                'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                'pinata_api_key': "027a3a5204bf3ff59ffc",
+                'pinata_secret_api_key': "b8c59aef2458bb2f4015b6f2624e32fb9eab4c1635d5c1fcd2336b32646453f3"
+            }
+        })
+            .then(res => "https://gateway.pinata.cloud/ipfs/" + res.data.IpfsHash)
+            .catch(err => console.log('error1'));
+    };
 
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/exportKey
     async exportCryptoKey(key, type) {
@@ -82,43 +98,6 @@ export default class AdminPage extends Component {
         }
     }
 
-    /* ######
-    *
-    *
-    *
-    * */
-    fromBase64 = base64String => Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
-    getPkcs8Der = pkcs8Pem => {
-        pkcs8Pem = pkcs8Pem.replace( /[\r\n]+/gm, "" );
-        const pkcs8PemHeader = "-----BEGIN PRIVATE KEY-----";
-        const pkcs8PemFooter = "-----END PRIVATE KEY-----";
-        pkcs8Pem = pkcs8Pem.substring(pkcs8PemHeader.length, pkcs8Pem.length - pkcs8PemFooter.length);
-        return this.fromBase64(pkcs8Pem);
-    }
-    importPrivateKey(pem) {
-        return window.crypto.subtle.importKey("pkcs8", this.getPkcs8Der(pem),{name: "RSASSA-PKCS1-v1_5", hash: "SHA-256",},true, ["sign"]);
-    }
-    str2ab(str) {
-        const buf = new ArrayBuffer(str.length);
-        const bufView = new Uint8Array(buf);
-        for (let i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
-        }
-        return buf;
-    }
-    getDataEncoding = (data) => {
-        const enc = new TextEncoder()
-        return enc.encode(data)
-    }
-    importPublicKey(pem) {
-        const pemHeader = "-----BEGIN PUBLIC KEY-----";
-        const pemFooter = "-----END PUBLIC KEY-----";
-        const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
-        const binaryDerString = atob(pemContents);
-        const binaryDer = this.str2ab(binaryDerString);
-        return window.crypto.subtle.importKey("spki", binaryDer,{name: "RSASSA-PKCS1-v1_5", hash: "SHA-256",}, true, ["verify"]);
-    }
-
     async handleAddSchool(e) {
         e.preventDefault();
         this.setState({message: "", loading: true});
@@ -126,21 +105,12 @@ export default class AdminPage extends Component {
         const logoSize = (this.logo.size / (1024*1024)).toFixed(3)
         const logoType = this.logo.type
         if (this.checkBtn.context._errors.length === 0 && logoSize > 0 && logoSize < 0.5 && logoType.includes('image')) {
-            const logo_url = await pinata.pinPictureToIPFS(this.logo)
+            const logo_url = await this.pinPictureToIPFS(this.logo)
             const key = await  window.crypto.subtle.generateKey(
                 {name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256",},
                 true, ["sign", "verify"])
             this.privateKey = await this.exportCryptoKey(key.privateKey, 'private');
             const publicKey = await this.exportCryptoKey(key.publicKey, 'public');
-
-            const privateKey2 = await this.importPrivateKey(this.privateKey)
-            const publicKey2 = await this.importPublicKey(publicKey)
-            const enc = new TextEncoder()
-            const signatureBytes = await window.crypto.subtle.sign({name: 'RSASSA-PKCS1-v1_5'}, privateKey2, enc.encode('test'))
-            const verify = await window.crypto.subtle.verify({name: 'RSASSA-PKCS1-v1_5'}, publicKey2, signatureBytes, enc.encode('test'));
-            console.log('verify', verify)
-
-
             AuthService.addSchool(this.state.name, this.state.address, logo_url, publicKey)
                 .then(res => {
                     const resMessage = res.data.message
@@ -190,7 +160,7 @@ export default class AdminPage extends Component {
                                     </div>
 
                                     <div className="form-group">
-                                        <label htmlFor="logo">School Logo (only image type &lt;0.5MB)</label>
+                                        <label htmlFor="logo">School Logo (only image type &lt;0.5MB / best ratio w:2/h:1)</label>
                                         <input type={"file"} accept="image/*" className="form-control" name="logo"
                                                value={this.state.logo} onChange={this.onChangeLogo}/>
                                     </div>

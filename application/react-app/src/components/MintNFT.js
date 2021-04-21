@@ -3,7 +3,8 @@ import GlobalState from "../contexts/GlobalState";
 import {Redirect} from "react-router-dom";
 import QRCode from 'react-qr-code';
 import User from "../services/user.service";
-const pinata = require('../utils/pinata');
+import {Container, Jumbotron} from "react-bootstrap";
+import axios from "axios"
 
 export default function MintNFT() {
     const [state, setState] = useContext(GlobalState);
@@ -14,6 +15,10 @@ export default function MintNFT() {
     const [txHash, setTxState] = useState(null)
     const [tokenNb, setTokenNbState] = useState(null)
     const [IV, setIVState] = useState(null)
+    const [description, setDescriptionState] = useState(null)
+    const [firstname, setFirstnameState] = useState(null)
+    const [lastname, setLastnameState] = useState(null)
+    const [birthdate, setBirthdateState] = useState(null)
 
     useEffect(() => {
         async function canImint() {
@@ -36,10 +41,21 @@ export default function MintNFT() {
         return <Redirect to='/'/>
     }
 
+    const pinJSONToIPFS = async (obj) => {
+        const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+        return await axios.post(url, obj, {
+            headers: {
+                pinata_api_key: "027a3a5204bf3ff59ffc",
+                pinata_secret_api_key: "b8c59aef2458bb2f4015b6f2624e32fb9eab4c1635d5c1fcd2336b32646453f3",
+            },
+        })
+            .then(res => "https://gateway.pinata.cloud/ipfs/" + res.data.IpfsHash)
+            .catch(err => console.log('error'));
+    }
+
     const getSchool = async () => {
         return await User.getSchool(state.address)
     }
-
     const data = {name:'', description: '', image: "", attributes: {signature: '', firstname:'', lastname:'', birthdate:'' }};
 
     const mySubmitHandler = async (event) => {
@@ -54,8 +70,28 @@ export default function MintNFT() {
         if (data_name === "description"){
             data[data_name] = val;
         } else { data.attributes[data_name] = val; }
-        console.log(data)
+
+        if (data_name === 'description') {
+            setDescriptionState(val)
+        } else if (data_name === 'firstname') {
+            setFirstnameState(val)
+        } else if (data_name === 'lastname') {
+            setLastnameState(val)
+        } else if (data_name === 'birthdate') {
+            setBirthdateState(val)
+        }
     };
+
+    const onChangeFile = async (e) => {
+        e.preventDefault();
+        if (e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                setFileState(e.target.result)
+            };
+            await reader.readAsText(e.target.files[0])
+        }
+    }
 
     const mintNFT = async () => {
         setErrorState(null)
@@ -63,11 +99,16 @@ export default function MintNFT() {
         setLoadingState(true)
         data.name = state.school.name
         data.image = state.school.logo
+        data.description = description
+        data.attributes.firstname = firstname
+        data.attributes.lastname = lastname
+        data.attributes.birthdate = birthdate
         const addressTo = state.school.address
+        console.log('final', data)
         User.encryptMetadata(data)
             .then( async res => {
                 setIVState(res.data.IV)
-                pinata.addDataToIPFS(res.data.metadata)
+                pinJSONToIPFS(res.data.metadata)
                     .then(hash_metadata => {
                         state.contract.methods.mint(addressTo, hash_metadata).send({ from: state.address})
                             .then(async token => {
@@ -93,16 +134,6 @@ export default function MintNFT() {
             })
     };
 
-
-    const onChangeFile = async (e) => {
-        if (e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                setFileState(e.target.result)
-            };
-            await reader.readAsText(e.target.files[0])
-        }
-    }
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
     // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/decrypt
@@ -134,7 +165,9 @@ export default function MintNFT() {
     }
 
     return (
-        <div className="container">
+        <Container className="p-3 text-center">
+            <Jumbotron>
+                <div className="container">
                 <h1 className="text-center" >Create a new diploma</h1>
             { state.error
                 ? <p>oops you don't have the right</p>
@@ -176,12 +209,12 @@ export default function MintNFT() {
                                 <p><a href={"https://cchain.explorer.avax-test.network/tx/"+txHash} target='_blank'>check transaction on explorer</a></p>
                                 <p><a href={"https://cchain.explorer.avax-test.network/tokens/0xa6d55043FDe319156327B093dc8E0A5555F3D614/instance/"+tokenNb} target='_blank'>check metadata on explorer</a></p>
                                 <br/>
-                                <p>IV to decode data (ONLY ONE!): {IV}</p>
+                                <p>key to decode data (<strong>ONLY ONE!</strong>): {IV}</p>
                             </div>
 
                             <di>
                                 <p>scan or send this QR Code to display the diploma</p>
-                                <QRCode value={"https://monsite.com/?id="+tokenNb+"&key="+IV}/>
+                                <QRCode value={"https://safeonchain..qsvtr.fr/?id="+tokenNb+"&key="+IV}/>
                             </di>
                         </div>
                     )}
@@ -195,5 +228,7 @@ export default function MintNFT() {
                 </form>
             }
         </div>
+            </Jumbotron>
+        </Container>
     );
 }

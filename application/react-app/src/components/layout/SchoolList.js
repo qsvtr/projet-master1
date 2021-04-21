@@ -2,17 +2,6 @@ import React, {Component} from "react";
 import User from "../../services/user.service"
 
 export default class SchoolList extends Component {
-    /*const [schools, setSchools] = useState(null);
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        async function displaySchools() {
-            const schools = await fetchSchools()
-            console.log('schools', schools)
-            setSchools(schools)
-        }
-        displaySchools()
-    }, []);*/
     constructor(props) {
         super(props);
         this.state = {schools: null, error: null, message: null, loading: false};
@@ -35,7 +24,7 @@ export default class SchoolList extends Component {
     render() {
         return (
             <div className="content mr-auto ml-auto">
-                <h1>Schools list:</h1>
+                <h3>Schools list:</h3>
                 <div className="row text-center">
                     <div className="col">
                         <div className="panel panel-pink">logo</div>
@@ -45,6 +34,9 @@ export default class SchoolList extends Component {
                     </div>
                     <div className="col">
                         <div className="panel panel-pink">address</div>
+                    </div>
+                    <div className="col">
+                        <div className="panel panel-pink">public key (to prove authenticity)</div>
                     </div>
                 </div>
                 <br/>
@@ -59,13 +51,16 @@ export default class SchoolList extends Component {
                                         return (
                                             <div key={school.id} className="row">
                                                 <div className="col">
-                                                    <img width="100" height="100" className="photo" src={school.logo} alt="img"/>
+                                                    <img width="200" height="auto" className="photo" src={school.logo} alt="img"/>
                                                 </div>
                                                 <div className="col">
                                                     <div className="panel panel-pink">{school.name}</div>
                                                 </div>
                                                 <div className="col">
                                                     <div className="panel panel-pink">{school.address}</div>
+                                                </div>
+                                                <div className="col">
+                                                    <div className="panel panel-pink"><a href="">download</a></div>
                                                 </div>
                                         </div>
                                         )

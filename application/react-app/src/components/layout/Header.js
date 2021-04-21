@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {Button} from 'react-bootstrap';
+import { Button} from 'react-bootstrap';
 import Web3 from "web3";
 import GlobalState from "../../contexts/GlobalState";
 import Diplome from "../../abis/Diplome.json";
@@ -42,7 +42,8 @@ function Header() {
 
     return(
         <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Link to="/" className="navbar-brand">*APP TITLE*</Link>
+            <Link to="/" className="navbar-brand">SAFE ON CHAIN</Link>
+
             <div className="navbar-nav mr-auto">
                 <li className="nav-item">
                     <Link to={"/"} className="nav-link">Home</Link>
@@ -53,10 +54,15 @@ function Header() {
                         <Link to={"/admin"} className="nav-link">Admin Board</Link>
                     </li>
                 )}
-            </div>
 
-            {!state.connected && <Button className='mr-1' color='#FF6B00' onClick={connectMetaMask}>Connect with Metamask</Button>}
-            {state.connected && state.address && <p style={{color: "white"}}>connected with {state.address}</p>}
+                {state.connected && state.address && (
+                    <li className="nav-item">
+                        <Link to={"/mintNFT"} className="nav-link">Mint Diploma (NFT)</Link>
+                    </li>
+                )}
+                {!state.connected && <Button className='mr-1' color='#FF6B00' onClick={connectMetaMask}>Connect with Metamask</Button>}
+                {state.connected && state.address && <p className="nav-link">connected with {state.address}</p>}
+            </div>
 
             {state.currentUser ? (
                 <div className="navbar-nav ml-auto">
