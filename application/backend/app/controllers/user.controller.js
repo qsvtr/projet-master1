@@ -49,7 +49,6 @@ exports.getSchool = (req, res) => {
 
 exports.encryptMetadata = (req, res) => {
     const data = req.body.metadata
-    console.log(data)
     if (!data) {
         res.status(500).send("data not found")
     }

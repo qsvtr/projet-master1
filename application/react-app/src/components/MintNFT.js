@@ -214,7 +214,7 @@ export default function MintNFT() {
 
                             <di>
                                 <p>scan or send this QR Code to display the diploma</p>
-                                <QRCode value={"https://safeonchain..qsvtr.fr/?id="+tokenNb+"&key="+IV}/>
+                                <QRCode value={"https://safeonchain.qsvtr.fr/?id="+tokenNb+"&key="+IV}/>
                             </di>
                         </div>
                     )}

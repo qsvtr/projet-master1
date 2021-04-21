@@ -7,6 +7,7 @@ const app = express();
 const whitelist = ['http://localhost', 'http://localhost:3000']
 const corsOptions = {
   origin: function (origin, callback) {
+	console.log(origin)
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
