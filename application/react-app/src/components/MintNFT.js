@@ -116,7 +116,7 @@ export default function MintNFT() {
                                 setTokenNbState(tokenNb)
                                 setTxState(token.transactionHash)
                                 setLoadingState(false)
-                                setMessageState('token successfully created!')
+                                setMessageState('diploma successfully created!')
                             })
                             .catch(error => {
                                 setErrorState("cannot mint NFT")
@@ -209,11 +209,14 @@ export default function MintNFT() {
                                 <p><a href={"https://cchain.explorer.avax-test.network/tx/"+txHash} target='_blank'>check transaction on explorer</a></p>
                                 <p><a href={"https://cchain.explorer.avax-test.network/tokens/0xa6d55043FDe319156327B093dc8E0A5555F3D614/instance/"+tokenNb} target='_blank'>check metadata on explorer</a></p>
                                 <br/>
-                                <p>key to decode data (<strong>ONLY ONE!</strong>): {IV}</p>
+                                <p>diploma id: {tokenNb}</p>
+                                <p>student key (<strong>ONLY ONE!</strong>): {IV}</p>
                             </div>
 
                             <di>
                                 <p>scan or send this QR Code to display the diploma</p>
+                                <a href={"https://safeonchain.qsvtr.fr/?id="+tokenNb+"&key="+IV}>https://safeonchain.qsvtr.fr/?id={tokenNb}&key={IV}</a>
+                                <br/>
                                 <QRCode value={"https://safeonchain.qsvtr.fr/?id="+tokenNb+"&key="+IV}/>
                             </di>
                         </div>

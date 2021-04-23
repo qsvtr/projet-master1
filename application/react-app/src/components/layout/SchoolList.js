@@ -1,3 +1,4 @@
+import './SchoolList.css'
 import React, {Component} from "react";
 import User from "../../services/user.service"
 
@@ -20,51 +21,42 @@ export default class SchoolList extends Component {
             })
     }
 
+    renderTableHeader() {
+        let header = Object.keys(this.state.school.data[0])
+        return header.map((key, index) => {
+            return <th key={index}>{key.toUpperCase()}</th>
+        })
+    }
+
+    renderTableData() {
+        return this.state.schools.data.map((school, index) => {
+            const { id, name, address, logo } = school
+            return (
+                <tr key={id}>
+                    <td><img width="200" height="auto" className="photo" src={logo} alt="img"/></td>
+                    <td>{name}</td>
+                    <td>{address}</td>
+                </tr>
+            )
+        })
+    }
+
 
     render() {
         return (
             <div className="content mr-auto ml-auto">
-                <h3>Schools list:</h3>
-                <div className="row text-center">
-                    <div className="col">
-                        <div className="panel panel-pink">logo</div>
-                    </div>
-                    <div className="col">
-                        <div className="panel panel-pink">name</div>
-                    </div>
-                    <div className="col">
-                        <div className="panel panel-pink">address</div>
-                    </div>
-                    <div className="col">
-                        <div className="panel panel-pink">public key (to prove authenticity)</div>
-                    </div>
-                </div>
-                <br/>
-
                 <div className="text-center">
                     { !this.state.schools
                         ? <div/>
                         : [
                             (this.state.error
                                     ? <p>error</p>
-                                    : this.state.schools.data.map((school, key) => {
-                                        return (
-                                            <div key={school.id} className="row">
-                                                <div className="col">
-                                                    <img width="200" height="auto" className="photo" src={school.logo} alt="img"/>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="panel panel-pink">{school.name}</div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="panel panel-pink">{school.address}</div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="panel panel-pink"><a href="">download</a></div>
-                                                </div>
-                                        </div>
-                                        )
-                                    })
+                                    :   <table id='students'>
+                                            <tbody>
+                                                <tr><th>logo</th><th>name</th><th>address</th></tr>
+                                                {this.renderTableData()}
+                                            </tbody>
+                                        </table>
                             ),
                         ]
                     }

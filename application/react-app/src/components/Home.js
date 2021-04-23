@@ -7,7 +7,7 @@ function Home() {
     return(
         <Container className="p-3 text-center">
             <Jumbotron>
-                <h1 className="header">Safe on Chain - Admin</h1>
+                <h1 className="header">Safe on Chain</h1>
                 <br/>
                 <SchoolList/>
             </Jumbotron>

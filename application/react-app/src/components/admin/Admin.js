@@ -160,7 +160,7 @@ export default class AdminPage extends Component {
                                     </div>
 
                                     <div className="form-group">
-                                        <label htmlFor="logo">School Logo (only image type &lt;0.5MB / best ratio w:2/h:1)</label>
+                                        <label htmlFor="logo">School Logo (only image type &lt;0.5MB)</label>
                                         <input type={"file"} accept="image/*" className="form-control" name="logo"
                                                value={this.state.logo} onChange={this.onChangeLogo}/>
                                     </div>

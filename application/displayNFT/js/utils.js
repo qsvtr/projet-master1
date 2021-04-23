@@ -10,8 +10,6 @@ const getToken = async (id, key) => {
         .then(data => {
             $('#loading').html('')
             const metadata = data.data
-            console.log(data);
-            $('#qrcodeText').html("Scan another!")
             if(data.message !== 'success') {
                 $('#error').append(`<h2 style="color: red">${data.message}</h2>`)
             } else {

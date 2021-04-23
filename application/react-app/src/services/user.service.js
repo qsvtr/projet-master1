@@ -13,7 +13,7 @@ class UserService {
     }
 
     getSchools() {
-        return axios.get(API_URL + 'getSchools')
+        return axios.get(API_URL + 'getSchools', { headers: authHeader() })
     }
 
     checkIamASchool(address) {
