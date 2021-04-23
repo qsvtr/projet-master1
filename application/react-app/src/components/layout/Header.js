@@ -29,7 +29,7 @@ function Header() {
             const chainId = await window.web3.eth.getChainId()
             if (chainId === 43113) { // Avalanche Network Testnet Fuji
                 const accounts = await window.web3.eth.getAccounts();
-                const contract_address = "0xa6d55043FDe319156327B093dc8E0A5555F3D614"
+                const contract_address = "0x5d43f2476D3fcF10C5552657C07C3D98f26114C1"
                 const contract = new window.web3.eth.Contract(Diplome.abi, contract_address);
                 setState(state => ({...state, connected: true, address: accounts[0], error: null, contract: contract}))
             } else {

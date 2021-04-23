@@ -187,7 +187,7 @@ export default function MintNFT() {
                         <input type='text' className='form-control mb-1' placeholder='Last name'
                             name='lastname' onChange={myChangeHandler}/>
 
-                        <input type='text' className='form-control mb-1' placeholder='Birth date'
+                        <input type='date' className='form-control mb-1' placeholder='Birth date'
                                name='birthdate' onChange={myChangeHandler}/>
                     </div>
 
@@ -214,7 +214,7 @@ export default function MintNFT() {
                             </div>
 
                             <di>
-                                <p>scan or send this QR Code to display the diploma</p>
+                                <p>scan the QR Code or send this link to display the diploma</p>
                                 <a href={"https://safeonchain.qsvtr.fr/?id="+tokenNb+"&key="+IV}>https://safeonchain.qsvtr.fr/?id={tokenNb}&key={IV}</a>
                                 <br/>
                                 <QRCode value={"https://safeonchain.qsvtr.fr/?id="+tokenNb+"&key="+IV}/>

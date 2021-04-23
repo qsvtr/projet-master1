@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Diplome is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+contract Diplome is ERC721, ERC721Enumerable, ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -27,10 +27,6 @@ contract Diplome is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
-    }
-
-    function safeMint(address to, uint256 tokenId) public onlyOwner {
-        _safeMint(to, tokenId);
     }
 
     function mint(address user, string memory _tokenURI) public returns (uint256) {

@@ -11,7 +11,7 @@ module.exports = {
       return new HDWalletProvider(mnemonic, `${nodeAPI}/ext/bc/C/rpc`)
      },
      network_id: "*",
-     gas: 4000000, // expensive but necessary bc large contract
+     gas: 3000000,
      gasPrice: 225000000000
    }
   },
