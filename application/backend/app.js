@@ -37,3 +37,6 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}.`);
 });
+
+const bcrypt = require("bcryptjs");
+console.log(bcrypt.hashSync("superpass", 8))

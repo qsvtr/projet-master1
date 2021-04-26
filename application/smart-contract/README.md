@@ -16,6 +16,3 @@ modify with your credentials
 `truffle console --network development`
 
 `migrate --network development`
-
-## MintForm NFT
-`node src/index.js`
